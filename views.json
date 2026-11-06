@@ -2,12 +2,65 @@
   {
     "name": "week",
     "title": "This week",
-    "subtitle": "Fish Farm for Claude Code: what needs attention, rendered by npm run view",
+    "subtitle": "What needs a person across every site, pen and tank, worst first. Rendered by npm run view.",
     "sections": [
       {
-        "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
+        "title": "Legal duties, consent limits and fish welfare",
+        "note": "Unreported mortality events, feed caps, stocking density and low oxygen.",
+        "sql": "select coalesce(site, '') as site, item, rule, detail, days from site_attention where severity = 1 order by days desc nulls last, site"
+      },
+      {
+        "title": "Overdue and close",
+        "sql": "select coalesce(site, '') as site, item, rule, detail, days from site_attention where severity = 2 order by days desc nulls last, site"
+      },
+      {
+        "title": "Housekeeping",
+        "sql": "select coalesce(site, '') as site, item, rule, detail, days from site_attention where severity = 3 order by days desc nulls last, site"
+      }
+    ]
+  },
+  {
+    "name": "stock",
+    "title": "Stock in the water",
+    "subtitle": "Every stocked pen and tank: fish, average weight, biomass and density against its limit.",
+    "sections": [
+      {
+        "title": "By site",
+        "sql": "select site, count(*)::int as units, sum(count)::int as fish, round(sum(biomass_kg) / 1000.0, 1)::float as biomass_t from holding_now group by site order by site"
+      },
+      {
+        "title": "By unit",
+        "sql": "select site, unit, batch, species, count as fish, round(avg_g)::int as avg_g, weighed_on, biomass_kg::float as biomass_kg, density_kg_m3::float as density, max_density_kg_m3::float as limit_kg_m3 from holding_now order by site, unit"
+      }
+    ]
+  },
+  {
+    "name": "harvest",
+    "title": "Harvest plan",
+    "subtitle": "Units within 10% of harvest weight, and any withholding period that still blocks them.",
+    "sections": [
+      {
+        "title": "Ready or close",
+        "sql": "select site, unit, batch, count as fish, round(avg_g)::int as avg_g, target_weight_g::int as target_g, biomass_kg::float as biomass_kg, case when withhold_until >= current_date then 'withholding until ' || withhold_until when avg_g >= target_weight_g then 'ready' else 'growing' end as status from holding_now where avg_g >= target_weight_g * 0.9 order by avg_g desc"
+      },
+      {
+        "title": "Harvested in the last 90 days",
+        "sql": "select x.code, u.code as unit, x.harvested_on, x.count as fish, x.total_kg::float as total_kg, x.processor, x.docket from harvests x join holdings h on h.id = x.holding_id join units u on u.id = h.unit_id where x.harvested_on >= current_date - 90 order by x.harvested_on desc"
+      }
+    ]
+  },
+  {
+    "name": "feed",
+    "title": "Feed",
+    "subtitle": "Feed against each consent's yearly cap, and the feed on hand.",
+    "sections": [
+      {
+        "title": "Against the cap, last 365 days",
+        "sql": "select site, name, feed_t_365d::float as feed_t_365d, feed_cap_t::float as cap_t, pct_of_cap::float as pct_of_cap from site_feed order by pct_of_cap desc nulls last"
+      },
+      {
+        "title": "Feed on hand",
+        "sql": "select code, name, on_hand_kg::float as on_hand_kg, daily_kg_14d::float as daily_kg, days_left, reorder_days from feed_stock order by days_left nulls last"
       }
     ]
   }

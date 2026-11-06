@@ -1,11 +1,61 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
-    "file": "name",
+    "name": "harvest-declaration",
+    "title": "Harvest declaration",
+    "for_each": "select x.id, x.code from harvests x order by x.harvested_on",
+    "file": "code",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      {
+        "title": "The harvest",
+        "layout": "record",
+        "sql": "select x.code as harvest, s.operator as grower, s.name as site, u.code as unit, s.consent_ref as consent_or_licence, b.species, b.code as batch, b.origin, x.harvested_on, x.count as fish, x.total_kg::float as total_kg, x.processor, x.docket from harvests x join holdings h on h.id = x.holding_id join units u on u.id = h.unit_id join sites s on s.id = u.site_id join batches b on b.id = h.batch_id where x.id = $1"
+      },
+      {
+        "title": "Veterinary treatments for these fish",
+        "sql": "select t.code, t.started_on, t.product, t.withholding_days, coalesce(t.ended_on, t.started_on) + t.withholding_days as clear_on, coalesce(t.authorisation_ref, 'none recorded') as authorisation from treatments t join holdings h on h.id = t.holding_id where h.id = (select holding_id from harvests where id = $1) or h.id in (select m.from_holding_id from movements m join harvests x on x.holding_id = m.to_holding_id where x.id = $1) order by t.started_on"
+      },
+      {
+        "title": "Feed eaten in this unit",
+        "sql": "select f.code as feed, f.supplier, min(r.fed_on) as first_fed, max(r.fed_on) as last_fed, round(sum(r.kg))::int as kg from feed_records r join feeds f on f.id = r.feed_id where r.holding_id = (select holding_id from harvests where id = $1) group by f.code, f.supplier order by f.code"
+      }
+    ]
+  },
+  {
+    "name": "mortality-report",
+    "title": "Mortality event report",
+    "for_each": "select id, code from mortality_events order by found_on",
+    "file": "code",
+    "sections": [
+      {
+        "title": "The event",
+        "layout": "record",
+        "sql": "select code as event, site, unit, batch, found_on, count as fish, pct::float as percent_of_unit, notify_to, notify_by, notified_on, notified_to, reference, cause, status from mortality_register where id = $1"
+      },
+      {
+        "title": "Deaths in the unit, two weeks either side",
+        "sql": "select m.found_on, m.count, m.cause, m.note from mortalities m join mortality_events e on e.holding_id = m.holding_id where e.id = $1 and m.found_on between e.found_on - 14 and e.found_on + 14 order by m.found_on"
+      }
+    ]
+  },
+  {
+    "name": "site-summary",
+    "title": "Site production summary",
+    "for_each": "select id, code from sites where active order by code",
+    "file": "code",
+    "sections": [
+      {
+        "title": "The site",
+        "layout": "record",
+        "sql": "select s.name, s.kind, s.region, s.regulator, s.consent_ref, s.feed_cap_t::float as feed_cap_t, f.feed_t_365d::float as feed_t_365d, f.pct_of_cap::float as pct_of_cap, s.biosecurity_plan_reviewed_on from sites s join site_feed f on f.site = s.code where s.id = $1"
+      },
+      {
+        "title": "Stock by unit",
+        "sql": "select unit, batch, count as fish, round(avg_g)::int as avg_g, biomass_kg::float as biomass_kg, density_kg_m3::float as density from holding_now where site_id = $1 order by unit"
+      },
+      {
+        "title": "Deaths in the last 90 days",
+        "sql": "select u.code as unit, sum(m.count)::int as deaths, count(*)::int as records from mortalities m join holdings h on h.id = m.holding_id join units u on u.id = h.unit_id where u.site_id = $1 and m.found_on >= current_date - 90 group by u.code order by u.code"
+      }
     ]
   }
 ]

@@ -22,11 +22,55 @@ Fill this in once. A worker with context knows. A worker without it guesses.
 
 | When the operator asks for... | Use this |
 |---|---|
-| <!-- TODO(author): one row per slash command --> | `/...` |
+| What needs attention, the week, what is overdue | `/attention` |
+| Read out the day's feed | `/daily-log` |
+| Fish died, losses, morts | `/mort` |
+| A weighing, a sample, average weight | `/sample` |
+| Oxygen, temperature, salinity | `/reading` |
+| A treatment, medicated feed, a bath | `/treat` |
+| New batch, year class | `/add-batch` |
+| Fish into an empty pen or tank | `/stock` |
+| Move, split, grade, transfer fish | `/move` |
+| A harvest | `/harvest` |
+| Feed arrived | `/deliver` |
+| We told MPI, the vet or the council | `/notify` |
+| Close a mortality event | `/close-event` |
+| Biosecurity plan reviewed | `/review-plan` |
+| What is in the pens | `/units` |
+| One pen or tank | `/unit` |
+| One batch | `/batch` |
+| One mortality event | `/event` |
+| The sites | `/sites` |
+| Feeding by unit, feeding rate | `/feed` |
+| Feed on hand, what to order | `/feed-stock` |
+| Feed limit in the consent | `/feed-cap` |
+| Deaths this month | `/mortality` |
+| Mortality events | `/events` |
+| Growth, when pens reach harvest weight | `/growth` |
+| Oxygen and temperature this week | `/environment` |
+| Treatments, withholding | `/treatments` |
+| What can we harvest | `/harvest-plan` |
+| Past harvests | `/harvests` |
+| Feed conversion | `/fcr` |
+| Are we compliant | `/compliance` |
+| Report to MPI or the regulator | `/draft-event-report` |
+| Paperwork for the processor | `/harvest-declaration` |
+| Feed return for the council or EPA | `/feed-return` |
+| The Monday review | `/weekly-review` |
+| Bring data across from Farm360 | `/import` |
+| A copy of everything | `/export` |
+| Who changed what | `/activity` |
+| Add a field, change a rule or threshold | `/customise` |
+| A new dashboard | `/new-view` |
 
-If an ask fits nothing here, run the CLI directly (`npm run <cli> -- --help`) and then propose a new command for it.
+If an ask fits nothing here, run the CLI directly (`npm run farm -- help`) and then propose a new command for it.
 
 ## Hard rules
+
+- A unit holds one batch at a time. Never mix batches in a record.
+- Never record a harvest the CLI refuses for withholding. Tell the operator the treatment and the clear date.
+- A mortality event is reported by a person. Draft the report; never contact MPI, a vet or a regulator from here.
+- Feed, death, weight and reading records are never edited. A correction is a new record with a note.
 
 - Never send email or messages from here. Draft to `drafts/`, a person sends.
 - Never delete records without an explicit yes in this session. Prefer marking closed or archived.

@@ -1,24 +1,22 @@
 # Why there is no front end
 
-Innovasea Farm360 is a database with a subscription. The tables underneath it are ordinary: a few entities, a few relationships, a handful of workflows you repeat every week. What you pay for is the layer on top that lets people who do not write SQL get at those tables. Screens, filters, dashboards, forms.
+A fish farm system is a database with a subscription on top. Underneath it are ordinary tables: sites, pens and tanks, batches, the fish in each unit, and the daily records of feed, deaths, weights, treatments and harvests. What the subscription pays for is the layer of screens that lets a farm manager get at those tables.
 
-That layer used to be the whole product, because talking to a database was hard. It is not hard any more. Open this folder in Claude Code, describe what you want, and it writes the query, runs it, and explains the answer. Ask a question the dashboard never had a chart for and you still get an answer.
+That layer used to be the whole product, because talking to a database was hard. It is not any more. Open this folder in Claude Code, say what you want ("which pens are ready to harvest and clear of withholding?"), and it runs the query and explains the answer. A question the dashboard never had a chart for still gets an answer.
 
 ## What you gain
 
-- **Better answers.** A dashboard shows what the vendor decided to chart. Here you ask your own question, in your own words, and get it answered against your own data.
-- **No seats.** Everyone who needs to look can look. The bill does not grow with headcount.
-- **Your data in your Postgres.** Plain tables. Back them up, query them from anything, leave any time. There is no export step because there is nothing to leave.
-- **A process that matches you.** When your way of working changes, you add a command. You do not wait for a feature request to clear.
+- **Answers to your own questions.** Which pen is over density, which site is close to its feed cap, which deaths nobody has reported, all from one request.
+- **No seats.** Everyone who needs to look can look.
+- **Your records in your own database.** Back them up, query them from anything, keep them when you change suppliers.
+- **Rules that match your consent.** Your thresholds, your limits and your reporting windows, changed in plain words.
 
-## What you give up
+## What a screen gives that this does not
 
-- **A visual board.** Stages are a table you ask about, not cards you drag.
-- **A phone app.** It runs where Claude Code runs.
-- **A vendor help desk.** This is open source. Enterprise DNA supports the installed version for businesses that want someone to call.
+- **Entry at the pen.** Crews on a barge with gloves on want big buttons and offline entry. Here a person types or dictates the numbers into Claude Code at the end of the shift, or a simple form writes to the same database.
+- **Live sensor charts and camera feeds.** Oxygen probes, feeding systems and cameras come with their own screens. This holds the daily readings that matter for welfare and compliance, not the live trace.
+- **Drag and drop planning.** Moving fish between pens is a command, not a drag.
 
-## Who this fits
-
-Small teams who already use Claude Code, or who would rather learn to ask than learn another interface. If your team needs a screen to look at all day, keep Innovasea Farm360. If you need the answers more than the screens, this is cheaper, faster and yours.
+Enterprise DNA builds any of these into your own version when your team needs them, on the same database you own.
 
 Installed and run for you: https://enterprisedna.co/omni/instead-of/farm360
